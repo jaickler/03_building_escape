@@ -3,6 +3,7 @@
 
 #include "Grabber.h"
 #include "Runtime/Engine/Public/DrawDebugHelpers.h"
+#include "Runtime/Engine/Public/CollisionQueryParams.h"
 
 #define OUT
 
@@ -35,11 +36,11 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	// ...
 	FVector PlayerViewPointLocation;
 	FRotator PlayerViewPointRotation;
-	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint( 
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(
 		OUT	PlayerViewPointLocation,
 		OUT	PlayerViewPointRotation
 	);
-	
+
 	/*UE_LOG(LogTemp, Warning, TEXT("PlayerViewPointLocation: %s"), *PlayerViewPointLocation.ToString());
 	UE_LOG(LogTemp, Warning, TEXT("PlayerViewPointRotation: %s"), *PlayerViewPointRotation.ToString());*/
 	float Reach = 100.f;
@@ -55,5 +56,20 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 		0.f,
 		10.f
 	);
+
+	FCollisionQueryParams TraceParameters(FName(TEXT("")), false, GetOwner());
+
+	FHitResult Hit;
+	GetWorld()->LineTraceSingleByObjectType(
+		OUT Hit,
+		PlayerViewPointLocation,
+		LineTraceEnd,
+		FCollisionObjectQueryParams(ECollisionChannel::ECC_PhysicsBody),
+		TraceParameters
+	);
+	AActor* ActorHit = Hit.GetActor();
+	if (ActorHit) {
+		UE_LOG(LogTemp, Warning, TEXT("Object: %s"), *ActorHit->GetName());
+	}
 }
 
