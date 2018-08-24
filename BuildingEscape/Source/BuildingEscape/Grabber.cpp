@@ -3,6 +3,7 @@
 
 #include "Grabber.h"
 #include "Runtime/Engine/Public/DrawDebugHelpers.h"
+#include "Runtime/Engine/Classes/GameFramework/Actor.h"
 #include "Runtime/Engine/Public/CollisionQueryParams.h"
 
 #define OUT
@@ -24,7 +25,18 @@ void UGrabber::BeginPlay()
 	Super::BeginPlay();
 
 	UE_LOG(LogTemp, Warning, TEXT("Grabber reporting."));
+
+	///Looks for a physics handle
+
+	PhysicsHandle = GetOwner()->FindComponentByClass<UPhysicsHandleComponent>();
 	
+	if (PhysicsHandle) {
+		/// Physics Handle Found
+
+	}
+	else {
+		UE_LOG(LogTemp, Error, TEXT("No physics handle for %s was found."), *GetOwner()->GetName());
+	}
 }
 
 
@@ -43,7 +55,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 
 	/*UE_LOG(LogTemp, Warning, TEXT("PlayerViewPointLocation: %s"), *PlayerViewPointLocation.ToString());
 	UE_LOG(LogTemp, Warning, TEXT("PlayerViewPointRotation: %s"), *PlayerViewPointRotation.ToString());*/
-	float Reach = 100.f;
+	
 	FVector LineTraceEnd = PlayerViewPointLocation + (PlayerViewPointRotation.Vector() * Reach);
 
 	DrawDebugLine(
